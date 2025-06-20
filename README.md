@@ -76,10 +76,9 @@ with zipfile.ZipFile(zip_path, 'r') as zip_ref:
     zip_ref.extractall(extract_dir)
 ```
 
-3. **Run the training script**
-```bash
-run all cells in colab
-```
+3. **Run the training script** <br>
+        -run all cells in colab
+
 
 ## 💻 Code Structure
 
