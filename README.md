@@ -18,7 +18,7 @@ E-waste contains valuable materials that can be recovered and reused, but also h
 
 ### Model Architecture
 - **Base Model**: EfficientNetV2B0 (transfer learning)
-- **Input Size**: 128x128 pixels
+- **Input Size**: 128x128 pixels updated to 224x224 pixels
 - **Categories**: 10 distinct e-waste types
 - **Batch Size**: 32
 - **Framework**: TensorFlow/Keras
@@ -56,6 +56,7 @@ pip install seaborn
 pip install scikit-learn
 pip install pillow
 pip install numpy
+pip install gTTs
 ```
 
 ### Installation & Setup
@@ -91,11 +92,22 @@ datatrain = tf.keras.utils.image_dataset_from_directory(
     image_size=(128,128), 
     batch_size=32
 )
+similarly for datatest and data validation
+
+#data preprocessing
+from tensorflow.keras.applications.mobilenet_v3 import preprocess_input
+
+datatrain = datatrain.map(lambda x, y: (preprocess_input(x), y))
+datavalid = datavalid.map(lambda x, y: (preprocess_input(x), y))
+
+AUTOTUNE = tf.data.AUTOTUNE
+datatrain = datatrain.cache().prefetch(buffer_size=AUTOTUNE)
+datavalid = datavalid.cache().prefetch(buffer_size=AUTOTUNE)
 ```
 
 ### Model Architecture
 - **Input Layer**: 128x128x3 images
-- **Base Model**: EfficientNetV2B0 (pre-trained on ImageNet)
+- **Base Model**: EfficientNetV2B0 (pre-trained on ImageNet) modified to MobileNetV3Large
 - **Custom Head**: Dense layers for classification
 - **Output**: 10 classes with softmax activation
 
@@ -103,7 +115,7 @@ datatrain = tf.keras.utils.image_dataset_from_directory(
 - **Optimizer**: Adam with adaptive learning rate
 - **Loss Function**: Categorical crossentropy
 - **Metrics**: Accuracy, precision, recall
-- **Callbacks**: Early stopping, model checkpointing
+- **Callbacks**: Early stopping, model checkpointing, Learning rate schedule
 
 ## 📈 Model Performance
 
@@ -121,12 +133,19 @@ datatrain = tf.keras.utils.image_dataset_from_directory(
 
 ## 🌐 Deployment
 
-### Gradio Web Interface
-The project includes a user-friendly web interface built with Gradio:
-- **Image Upload**: Easy drag-and-drop functionality
-- **Real-time Classification**: Instant prediction results
-- **Confidence Scores**: Probability distribution across classes
-- **Batch Processing**: Handle multiple images simultaneously
+### 🌐 Gradio Web Interface
+
+The project features a clean and accessible web UI powered by **Gradio**:
+
+- 📤 **Image Upload**: Supports drag-and-drop and webcam capture for fast input
+- ⚡ **Real-time Classification**: Instant predictions using a MobileNetV3-based model
+- 📊 **Confidence Scores**: Displays class probabilities with percentage confidence
+- 🔄 **Quantity Input**: Calculates CO₂ savings based on the number of items
+- ♻️ **Recycling Guidance**: Provides responsible disposal instructions per e-waste type
+- 🔊 **Voice Output**: Uses TTS for audio feedback (via gTTS or pyttsx3)
+- 🚀 **Deployment-Ready**: Designed for easy hosting on Hugging Face Spaces or locally
+
+> This interface makes the AI system accessible to both end-users and field workers, promoting sustainability and awareness.
 
 ### Usage Example
 ```python
@@ -145,17 +164,26 @@ interface = gr.Interface(
 
 interface.launch()
 ```
+### 🔑 Key Functions
 
-## 🔍 Key Functions
+This project goes beyond basic classification by integrating meaningful features for real-world e-waste management:
 
-### `plot_class_distribution(dataset, title)`
-Visualizes the distribution of samples across different e-waste categories to identify class imbalances.
+- 🧠 **Image Classification**  
+  Identifies e-waste items across 10 categories using a MobileNetV3-based deep learning model.
 
-**Parameters:**
-- `dataset`: TensorFlow dataset object
-- `title`: Plot title for identification
+- 📋 **Recycling Instruction Generator**  
+  Provides safe and environmentally friendly disposal methods for each identified item.
 
-**Purpose:** Ensures balanced training and identifies potential bias in the dataset.
+- 🌱 **CO₂ Savings Estimator**  
+  Calculates estimated carbon savings based on the quantity of e-waste diverted from landfill.
+
+- 🔊 **Voice Assistant (TTS)**  
+  Speaks out the predicted category and recycling advice, improving accessibility and hands-free operation.
+
+- 🧑‍💻 **Interactive Web Interface (Gradio)**  
+  Enables real-time classification, guidance, and feedback through an intuitive, browser-based interface.
+
+
 
 ## 🎯 Industry Applications
 
