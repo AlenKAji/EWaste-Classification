@@ -1,4 +1,4 @@
-# E-Waste Image Classification Using EfficientNetV2B0
+# E-Waste Image Classification Using EfficientNetV2B0(Modified to MobileNetV3Large)
 
 ## 🌍 Project Overview
 
